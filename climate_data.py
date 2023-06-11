@@ -63,7 +63,36 @@ def dataframe_creation():
 
 def analysis_calculation():
     '''Stage 4'''
-    pass
+
+    climate_data_indexed = climate_data.set_index(['Country', 'ISO2', 'ISO3', 'Year'])
+    # print(climate_data_indexed)
+    climate_data_indexed_sorted = climate_data_indexed.sort_index()
+    print(climate_data_indexed_sorted)
+
+    # Used the describe method to print the aggregate stats for the entire dataset. 
+    agg_stats = climate_data_indexed_sorted.dropna().describe()
+    print(agg_stats)
+    
+    # Accessing a particular Country's Stats from the sorted dataset 
+    country_stats = climate_data_indexed_sorted.loc['Zimbabwe']
+    print(country_stats)
+
+    # Used the groupby operation and aggregation computation for a subset of the data 
+    each_country_yearly_temp = climate_data_indexed_sorted.groupby(['Country', 'Year'])['Temp'].sum()
+    print(each_country_yearly_temp)
+
+    each_country_yearly_land = climate_data_indexed_sorted.groupby(['Country', 'Year'])['Land_Cover_Index'].sum()
+    print(each_country_yearly_land)
+
+    each_country_yearly_disaster = climate_data_indexed_sorted.groupby(['Country', 'Year'])['Total Disaster'].sum()
+    print(each_country_yearly_disaster)
+
+    each_country_temp = each_country_yearly_temp['Zimbabwe']
+    print(each_country_temp)
+
+    # Used an aggregation computation for a subset of the data. 
+    each_country_temp_stats = each_country_temp.dropna().describe()
+    print(each_country_temp_stats)
 
 def export_data():
     '''Stage 5 a'''
