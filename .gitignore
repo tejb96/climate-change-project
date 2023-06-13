@@ -162,3 +162,5 @@ cython_debug/
 # Jupiter Notebooks
 .ipynb_checkpoints/
 *.ipynb
+
+README.*
