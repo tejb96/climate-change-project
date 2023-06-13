@@ -80,7 +80,9 @@ def create_dataframe():
     # and eventually with the disaster dataset. 
     # Climate data is the combined dataset containing [5771 rows X 12 columns]    
     df_1 = pd.merge(temp_data, land_data, on=['ISO3', 'Country', 'Year'], how='inner')
-    climate_data = pd.merge(df_1, disaster_data, on=['ISO3', 'Country', 'Year'], how='inner')
+    climate_data_fill_mv = pd.merge(df_1, disaster_data, on=['ISO3', 'Country', 'Year'], how='inner')
+    # Fill all missing values with zeros 
+    climate_data = climate_data_fill_mv.fillna(0)
     return climate_data
 
 def masking_operation_subset_1(climate_data):
@@ -305,7 +307,7 @@ def get_valid_country_input_by_iso3(valid_iso3_list):
     """
     while True:
         try:
-            country = input("Please enter the ISO3 code of the country (example: CAN, USA) or enter 'exit' to exit the program: ").upper()
+            country = input("Please enter the ISO3 code of the country (example: CAN, USA) or enter 'exit' to exit the program: ").strip().upper()
             if country == "EXIT":
                 sys.exit()
             elif country in valid_iso3_list:
@@ -330,7 +332,7 @@ def get_valid_parameter_input(valid_params):
     while True:
         try:
             parameter_table = "\n".join([f"{k}: {v}" for k, v in valid_params.items()])
-            param = input(f"Please enter the code for the parameter you want to choose from the list below or enter 'exit' to exit the program\n{parameter_table}\n").upper()
+            param = input(f"Please enter the code for the parameter you want to choose from the list below or enter 'exit' to exit the program\n{parameter_table}\n").strip().upper()
             if param == "EXIT":
                 sys.exit()
             if param.isdigit() and int(param) in valid_params.keys():
@@ -360,6 +362,7 @@ def get_iso3_countries_dict_from_df(climate_data):
 def main():
     print("ENSF592 Climate Data Statistics")
     print("Influence of climate change on various indicators for countries across several years\n")
+    print("Compare the climate change indicator statistics for any 2 countries of your choice over a period of 29 years\n")
     
     # Create data frame
     climate_data = create_dataframe()
@@ -405,19 +408,19 @@ def main():
     print(f"A pivot table showing the {valid_params[param]} statistics for the 2 countries for the period from 1992 to 2020 is displayed below and a corresponding bar graph is generated as well showing the trend:\n{comparison_stats}")
 
     # plot data
-    print("Plotting the data.")
+    print("Plotting the data. After viewing the bar graph, please close the pop-up to continue.")
     plot_data(comparison_stats, valid_params[param], iso3_1, iso3_2)
 
     # Print the aggregate stats for the entire dataset
     print("Would you be interested in knowing the aggregate statistics for the entire climate data dataset?")
-    aggregate_input = input("Enter 'Y' for yes or enter any other key to skip this step and continue: ").upper()
+    aggregate_input = input("Enter 'Y' for yes or enter any other key to skip this step and continue: ").strip().upper()
     if aggregate_input == "Y":
         agg_stats = overall_agg_stats(df)
         print(f"\nThe aggregate stats for the entire Climate Data dataset is:\n{agg_stats}")
     # masking operation
-    # TODO Uncomment this to obtain the result 
+
     print("Would you be interested in knowing how many countries experienced more than 20 climate-related disasters in a year?")
-    high_disaster_input = input("Enter 'Y' for yes or enter any other key to skip this step and continue: ").upper()
+    high_disaster_input = input("Enter 'Y' for yes or enter any other key to skip this step and continue: ").strip().upper()
     if high_disaster_input == "Y":
         country_yearly_disasters = masking_operation_subset_2(climate_data)
         high_disaster_countries = masking_operation(country_yearly_disasters)
