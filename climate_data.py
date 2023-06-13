@@ -142,9 +142,6 @@ def analysis_part_1(climate_data, country_yearly_disasters, total_disasters_year
     # A hierarchical indexing is created 
     climate_data = climate_data.set_index(['ISO3', 'Country', 'Year'])
     climate_data = climate_data.sort_index()
-
-    # Export the entire merged, hierarchical dataset to an excel file in the working directory 
-    export_data(climate_data)
     return climate_data
 
 def export_data(climate_data):
@@ -308,7 +305,7 @@ def get_valid_country_input_by_iso3(valid_iso3_list):
     """
     while True:
         try:
-            country = input("Please enter the ISO3 code of the country or enter 'exit' to exit the program: ").upper()
+            country = input("Please enter the ISO3 code of the country (example: CAN, USA) or enter 'exit' to exit the program: ").upper()
             if country == "EXIT":
                 sys.exit()
             elif country in valid_iso3_list:
@@ -408,6 +405,7 @@ def main():
     print(f"A pivot table showing the {valid_params[param]} statistics for the 2 countries for the period from 1992 to 2020 is displayed below and a corresponding bar graph is generated as well showing the trend:\n{comparison_stats}")
 
     # plot data
+    print("Plotting the data.")
     plot_data(comparison_stats, valid_params[param], iso3_1, iso3_2)
 
     # Print the aggregate stats for the entire dataset
@@ -424,6 +422,10 @@ def main():
         country_yearly_disasters = masking_operation_subset_2(climate_data)
         high_disaster_countries = masking_operation(country_yearly_disasters)
         print(f"\nThe countries (along with their ISO3 codes and year) that experienced more than 20 climate-related disasters a year are:\n{high_disaster_countries}")
+    # Export the entire merged, hierarchical dataset to an excel file in the working directory 
+    print("Please wait. The program is exporting the dataframe to an excel file.")
+    export_data(df)
+    print("Exporting completed. Thank you for your patience.")
     
           
 
